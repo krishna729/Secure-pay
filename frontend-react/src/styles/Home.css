@@ -1,0 +1,184 @@
+/* ================= GLOBAL ================= */
+
+section {
+  padding: 80px 8%;
+}
+
+h1, h2, h3 {
+  color: #1e293b;
+  margin: 0;
+}
+
+p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.primary-btn {
+  background: #4f46e5;
+  color: white;
+}
+
+.primary-btn:hover {
+  background: #4338ca;
+}
+
+.secondary-btn {
+  background: #0ea5e9;
+  color: white;
+}
+
+.secondary-btn:hover {
+  background: #0284c7;
+}
+
+
+/* ================= HERO SECTION ================= */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 90vh;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 550px;
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  margin-bottom: 30px;
+  font-size: 18px;
+}
+
+.hero-image {
+  flex: 1;
+  text-align: right;
+}
+
+.hero-image img {
+  width: 90%;
+  max-width: 500px;
+}
+
+
+/* ================= INSIGHTS SECTION ================= */
+
+.insights {
+  background: #f8fafc;
+  text-align: center;
+}
+
+.insights h2 {
+  font-size: 36px;
+  margin-bottom: 50px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  padding: 30px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+}
+
+.card img {
+  width: 190px;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+
+/* ================= SHIELD SECTION ================= */
+
+.shield-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shield-image {
+  flex: 1;
+}
+
+.shield-image img {
+  width: 90%;
+  max-width: 500px;
+}
+
+.shield-content {
+  flex: 1;
+  max-width: 500px;
+}
+
+.shield-content h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.shield-content p {
+  margin-bottom: 25px;
+  font-size: 17px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1024px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero,
+  .shield-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-image,
+  .shield-image {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .card-container {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-content h1 {
+    font-size: 36px;
+  }
+}
