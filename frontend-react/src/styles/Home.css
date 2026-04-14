@@ -182,3 +182,10 @@ p {
     font-size: 36px;
   }
 }
+
+/* Section title — center + spacing */
+.section-title {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
+}

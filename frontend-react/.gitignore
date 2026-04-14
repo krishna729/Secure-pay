@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables — never push to GitHub!
+.env
+.env.local
+.env.production
