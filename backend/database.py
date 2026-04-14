@@ -1,8 +1,11 @@
-import sqlite3
+import psycopg2
+import psycopg2.extras
+import os
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def get_db():
-    conn = sqlite3.connect("securepay.db")
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL)
     return conn
 
 def init_db():
@@ -12,7 +15,7 @@ def init_db():
     # Users table
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            id        SERIAL PRIMARY KEY,
             name      TEXT NOT NULL,
             email     TEXT UNIQUE NOT NULL,
             password  TEXT,
@@ -25,7 +28,7 @@ def init_db():
     # Transactions table
     c.execute('''
         CREATE TABLE IF NOT EXISTS transactions (
-            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            id                SERIAL PRIMARY KEY,
             sender_upi        TEXT,
             receiver_upi      TEXT,
             amount            INTEGER,
@@ -34,6 +37,20 @@ def init_db():
             decision          TEXT,
             resolved          INTEGER DEFAULT NULL,
             time              TEXT
+        )
+    ''')
+
+    # Notifications table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS notifications (
+            id          SERIAL PRIMARY KEY,
+            email       TEXT,
+            type        TEXT,
+            title       TEXT,
+            message     TEXT,
+            sub_message TEXT,
+            time        TEXT,
+            read        INTEGER DEFAULT 0
         )
     ''')
 
