@@ -3,6 +3,7 @@ from flask_cors import CORS
 import joblib
 import pandas as pd
 import datetime
+import zoneinfo
 import re
 import hashlib
 from database import get_db, init_db
@@ -10,11 +11,13 @@ from database import get_db, init_db
 app = Flask(__name__)
 CORS(app)
 
+IST = zoneinfo.ZoneInfo("Asia/Kolkata")  # Indian Standard Time
+
 init_db()  # DB tables create hoga on startup
 
 @app.route("/")
 def home():
-    return "✅ SecurePay Fraud Detection API is running"
+    return "SecurePay Fraud Detection API is running"
 
 model = joblib.load("final_fraud_model.pkl")
 df    = pd.read_csv("upi_fraud_dataset.csv")
@@ -97,7 +100,7 @@ def save_transaction():
         data["riskLevel"],
         data["fraudProbability"],
         data["decision"],
-        datetime.datetime.now().strftime("%d %b %Y, %I:%M %p")
+        datetime.datetime.now(IST).strftime("%d %b %Y, %I:%M %p")  # IST time
     ))
     db.commit()
     return jsonify({"success": True, "message": "Transaction saved"})
@@ -219,7 +222,7 @@ def detect_fraud():
     sender_tx_count = int(data.get("sender_tx_count", 1))
     device          = str(data.get("device", "known"))
 
-    now             = datetime.datetime.now()
+    now             = datetime.datetime.now(IST)  # IST time
     hour            = now.hour
     amount_ratio    = round(amount / avg_transaction, 2) if avg_transaction > 0 else 1.0
     high_risk_time  = 1 if (hour >= 23 or hour <= 5) else 0
@@ -281,7 +284,7 @@ def detect_fraud():
     if amount_ratio > 3:
         reasons.append(f"Amount Rs.{int(amount)} is {amount_ratio}x higher than your average")
     if high_risk_time:
-        reasons.append(f"Transaction at {hour}:00 — late night is high risk")
+        reasons.append(f"Transaction at {hour}:00 IST — late night is high risk")
     if is_new_receiver:
         reasons.append("Unknown receiver — not found in our database")
         reasons.extend(upi_signals)
@@ -332,7 +335,7 @@ def stats():
     })
 
 # ──────────────────────────────────────────
-#  ADMIN ROUTES (data dekhne ke liye)
+#  ADMIN ROUTES
 # ──────────────────────────────────────────
 @app.route("/admin/users", methods=["GET"])
 def admin_users():
@@ -346,9 +349,6 @@ def admin_transactions():
     txs = db.execute("SELECT * FROM transactions ORDER BY id DESC").fetchall()
     return jsonify([dict(t) for t in txs])
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-
 # ──────────────────────────────────────────
 #  NOTIFICATION ROUTES
 # ──────────────────────────────────────────
@@ -356,17 +356,16 @@ if __name__ == "__main__":
 def save_notification():
     data = request.json
     db   = get_db()
-    # Create notifications table if not exists
     db.execute('''
         CREATE TABLE IF NOT EXISTS notifications (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            email      TEXT,
-            type       TEXT,
-            title      TEXT,
-            message    TEXT,
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            email       TEXT,
+            type        TEXT,
+            title       TEXT,
+            message     TEXT,
             sub_message TEXT,
-            time       TEXT,
-            read       INTEGER DEFAULT 0
+            time        TEXT,
+            read        INTEGER DEFAULT 0
         )
     ''')
     db.execute('''
@@ -381,9 +380,12 @@ def save_notification():
 
 @app.route("/notifications/<email>", methods=["GET"])
 def get_notifications(email):
-    db    = get_db()
+    db     = get_db()
     notifs = db.execute(
         "SELECT * FROM notifications WHERE email = ? ORDER BY id DESC",
         (email,)
     ).fetchall()
     return jsonify([dict(n) for n in notifs])
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
